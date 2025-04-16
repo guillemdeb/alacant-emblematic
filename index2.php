@@ -4,10 +4,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/vnd.icon" href="img/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png">
-  <link rel="icon" type="image/vnd.icon" sizes="32x32" href="img/favicon-32x32.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Descobreix Alacant</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="manifest" href="manifest.json" />
@@ -24,12 +20,17 @@
       width: 32px;
       height: 32px;
     }
+    /* Estil personalitzat per al mapa */
+    #mapa-container {
+      height: 400px; /* ajusta l'altura del mapa com necessites */
+      width: 100%;
+    }
   </style>
 </head>
 <body class="bg-white text-gray-800">
   <header class="bg-blue-900 text-white p-4 shadow">
     <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
-      <img src="img\logo.png" width="80"/><h1 class="text-2xl font-bold" id="titol">Descobreix Alacant</h1>
+      <h1 class="text-2xl font-bold" id="titol">Descobreix Alacant</h1>
       <nav class="flex flex-wrap items-center gap-4 mt-2 md:mt-0">
         <a href="#mapa" class="hover:underline" id="nav-mapa">Mapa</a>
         <a href="#rutes" class="hover:underline" id="nav-rutes">Rutes</a>
@@ -51,6 +52,7 @@
   <main class="container mx-auto p-4 space-y-12">
     <section id="mapa">
       <h2 class="text-xl font-semibold mb-2" id="txt-mapa">Mapa Interactiu</h2>
+      <!-- Contenidor del mapa on es carregaran els punts i la ruta -->
       <div id="mapa-container" class="h-96 rounded overflow-hidden shadow mb-4"></div>
       <button id="center-map" class="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">Centrar en la meua posició</button>
     </section>
@@ -87,69 +89,19 @@
     </div>
   </footer>
 
+  <!-- Codi JavaScript per afegir el mapa amb punts i ruta -->
+  <script src="/js/mapa-ruta-historica.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then(reg => console.log("Service Worker registrat:", reg))
-          .catch(err => console.error("Error al registrar SW:", err));
-      });
-    }
-
-    const textos = {
-      ca: {
-        titol: 'Descobreix Alacant', mapa: 'Mapa Interactiu', rutes: 'Rutes Emblemàtiques', valoracions: "Valoracions d'Usuaris", info: 'Informació dels Llocs', descripcio: "Descobreix els llocs més icònics d'Alacant amb realitat augmentada, dades històriques, fotografies antigues i molt més."
-      },
-      es: {
-        titol: 'Descubre Alicante', mapa: 'Mapa Interactivo', rutes: 'Rutas Emblemáticas', valoracions: 'Valoraciones de Usuarios', info: 'Información de los Lugares', descripcio: 'Descubre los lugares más icónicos de Alicante con realidad aumentada, datos históricos, fotografías antiguas y mucho más.'
-      },
-      en: {
-        titol: 'Discover Alicante', mapa: 'Interactive Map', rutes: 'Iconic Routes', valoracions: 'User Reviews', info: 'Place Information', descripcio: 'Discover the most iconic places in Alicante with augmented reality, historical facts, old photos and more.'
-      },
-      fr: {
-        titol: 'Découvrez Alicante', mapa: 'Carte Interactive', rutes: 'Routes Emblématiques', valoracions: 'Avis des Utilisateurs', info: 'Informations sur les Lieux', descripcio: 'Découvrez les lieux les plus emblématiques d\'Alicante avec la réalité augmentée, des données historiques, des photos anciennes et bien plus encore.'
-      },
-      it: {
-        titol: 'Scopri Alicante', mapa: 'Mappa Interattiva', rutes: 'Percorsi Emblematici', valoracions: 'Valutazioni degli Utenti', info: 'Informazioni sui Luoghi', descripcio: 'Scopri i luoghi più iconici di Alicante con realtà aumentata, dati storici, foto d\'epoca e molto altro.'
-      },
-      ar: {
-        titol: 'اكتشف أليكانتي', mapa: 'الخريطة التفاعلية', rutes: 'مسارات بارزة', valoracions: 'تقييمات المستخدمين', info: 'معلومات عن الأماكن', descripcio: 'اكتشف أشهر الأماكن في أليكانتي مع الواقع المعزز والمعلومات التاريخية والصور القديمة والمزيد.'
-      },
-      uk: {
-        titol: 'Відкрий Аліканте', mapa: 'Інтерактивна карта', rutes: 'Емблемні маршрути', valoracions: 'Відгуки користувачів', info: 'Інформація про місця', descripcio: 'Відкривайте найбільш знакові місця Аліканте з доповненою реальністю, історичними фактами, старовинними фотографіями та багато іншого.'
-      }
-    };
-
-    function canviarIdioma(idioma) {
-      if (textos[idioma]) {
-        localStorage.setItem('idiomaSeleccionat', idioma);
-        actualitzarTextos(idioma);
+    // Afegeix la funció de centrar el mapa en la teua posició
+    document.getElementById("center-map").addEventListener("click", function() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          map.setView([position.coords.latitude, position.coords.longitude], 14);
+        });
       } else {
-        console.warn("Idioma no suportat:", idioma);
-        actualitzarTextos('ca');
+        alert("La geolocalització no està disponible.");
       }
-    }
-
-    function actualitzarTextos(idioma) {
-      document.getElementById('titol').textContent = textos[idioma].titol;
-      document.getElementById('nav-mapa').textContent = textos[idioma].mapa;
-      document.getElementById('nav-rutes').textContent = textos[idioma].rutes;
-      document.getElementById('nav-valoracions').textContent = textos[idioma].valoracions;
-      document.getElementById('nav-info').textContent = textos[idioma].info;
-      document.getElementById('txt-descripcio').textContent = textos[idioma].descripcio;
-      document.getElementById('txt-mapa').textContent = textos[idioma].mapa;
-      document.getElementById('txt-rutes').textContent = textos[idioma].rutes;
-      document.getElementById('txt-valoracions').textContent = textos[idioma].valoracions;
-      document.getElementById('txt-info').textContent = textos[idioma].info;
-    }
-
-    const idiomaGuardat = localStorage.getItem('idiomaSeleccionat') || 'ca';
-    canviarIdioma(idiomaGuardat);
+    });
   </script>
 </body>
 </html>
-
-
-
-
-
