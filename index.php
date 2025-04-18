@@ -27,27 +27,74 @@
   </style>
 </head>
 <body class="bg-white text-gray-800">
-  <header class="bg-blue-900 text-white p-4 shadow">
-    <div class="container mx-auto flex flex-col md:flex-row items-center justify-between">
-      <img src="img\logo.png" width="80"/><h1 class="text-2xl font-bold" id="titol">Descobreix Alacant</h1>
-      <nav class="flex flex-wrap items-center gap-4 mt-2 md:mt-0">
-        <a href="#mapa" class="hover:underline" id="nav-mapa">Mapa</a>
-        <a href="#rutes" class="hover:underline" id="nav-rutes">Rutes</a>
-        <a href="#valoracions" class="hover:underline" id="nav-valoracions">Valoracions</a>
-        <a href="#info" class="hover:underline" id="nav-info">Informació</a>
-        <div class="flex gap-2 items-center">
-          <button class="flag-button" onclick="canviarIdioma('ca')" title="Català"><img src="img/Catalonia.svg" alt="Català" /></button>
-          <button class="flag-button" onclick="canviarIdioma('es')" title="Español"><img src="img/España.svg" alt="Español" /></button>
-          <button class="flag-button" onclick="canviarIdioma('en')" title="English"><img src="img/Uk.svg" alt="English" /></button>
-          <button class="flag-button" onclick="canviarIdioma('fr')" title="Français"><img src="img/França.svg" alt="Français" /></button>
-          <button class="flag-button" onclick="canviarIdioma('it')" title="Italiano"><img src="img/Italia.svg" alt="Italiano" /></button>
-          <button class="flag-button" onclick="canviarIdioma('ar')" title="العربية"><img src="img/arab.svg" alt="العربية" /></button>
-          <button class="flag-button" onclick="canviarIdioma('uk')" title="Українська"><img src="img/Uc.svg" alt="Українська" /></button>
-        </div>
-      </nav>
-    </div>
-  </header>
+<header class="bg-blue-900 text-white p-4 shadow relative">
+  <div class="container mx-auto flex items-center justify-between">
+    <h1 class="text-2xl font-bold" id="titol">Descobreix Alacant</h1>
 
+    <!-- Botó hamburguesa mòbil -->
+    <button class="md:hidden block focus:outline-none" onclick="toggleMenu()">
+      <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <!-- Navegació per a escriptori -->
+    <nav class="hidden md:flex flex-wrap items-center gap-4" id="menuDesktop">
+      <a href="#mapa" id="nav-mapa">Mapa</a>
+      <a href="#rutes" id="nav-rutes">Rutes</a>
+      <a href="#valoracions" id="nav-valoracions">Valoracions</a>
+      <a href="#info" id="nav-info">Informació</a>
+      <div class="flex gap-2 ml-4 flex-wrap">
+        <button class="flag-button" onclick="canviarIdioma('ca')"><img src="img/Catalonia.svg" alt="Català" /></button>
+        <button class="flag-button" onclick="canviarIdioma('es')"><img src="img/Spain.svg" alt="Español" /></button>
+        <button class="flag-button" onclick="canviarIdioma('en')"><img src="img/UK.svg" alt="English" /></button>
+        <button class="flag-button" onclick="canviarIdioma('fr')"><img src="img/France.svg" alt="Française" /></button>
+        <button class="flag-button" onclick="canviarIdioma('it')"><img src="img/Italy.svg" alt="Italiano" /></button>
+        <button class="flag-button" onclick="canviarIdioma('ar')"><img src="img/Arabic.svg" alt="عربي" /></button>
+        <button class="flag-button" onclick="canviarIdioma('uk')"><img src="img/Ukraine.svg" alt="Українська" /></button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Panell lateral mòbil -->
+  <div id="menuMobil" class="fixed top-0 left-0 w-1/2 h-full bg-blue-800 text-white z-50 p-6 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden">
+    <button onclick="toggleMenu()" class="absolute top-4 right-4 text-white text-2xl">&times;</button>
+    <nav class="flex flex-col gap-4 mt-8">
+      <a href="#mapa" onclick="toggleMenu()" id="nav-mapa-mob">Mapa</a>
+      <a href="#rutes" onclick="toggleMenu()" id="nav-rutes-mob">Rutes</a>
+      <a href="#valoracions" onclick="toggleMenu()" id="nav-valoracions-mob">Valoracions</a>
+      <a href="#info" onclick="toggleMenu()" id="nav-info-mob">Informació</a>
+      <div class="flex gap-2 mt-4 flex-wrap">
+        <button class="flag-button" onclick="canviarIdioma('ca'); toggleMenu()"><img src="img/Catalonia.svg" alt="Català" /></button>
+        <button class="flag-button" onclick="canviarIdioma('es'); toggleMenu()"><img src="img/Espanya.svg" alt="Español" /></button>
+        <button class="flag-button" onclick="canviarIdioma('en'); toggleMenu()"><img src="img/UK.svg" alt="English" /></button>
+        <button class="flag-button" onclick="canviarIdioma('fr'); toggleMenu()"><img src="img/França.svg" alt="Française" /></button>
+        <button class="flag-button" onclick="canviarIdioma('it'); toggleMenu()"><img src="img/Italia.svg" alt="Italiano" /></button>
+        <button class="flag-button" onclick="canviarIdioma('ar'); toggleMenu()"><img src="img/arab.svg" alt="عربي" /></button>
+        <button class="flag-button" onclick="canviarIdioma('uk'); toggleMenu()"><img src="img/Uc.svg" alt="Українська" /></button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- Capa fosc del fons -->
+  <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden" onclick="toggleMenu()"></div>
+</header>
+
+<script>
+  // Toggle menú lateral en mòbil
+  function toggleMenu() {
+    const menu = document.getElementById('menuMobil');
+    const overlay = document.getElementById('overlay');
+    const isOpen = !menu.classList.contains('-translate-x-full');
+    if (isOpen) {
+      menu.classList.add('-translate-x-full');
+      overlay.classList.add('hidden');
+    } else {
+      menu.classList.remove('-translate-x-full');
+      overlay.classList.remove('hidden');
+    }
+  }
+</script>
   <main class="container mx-auto p-4 space-y-12">
     <section id="mapa">
       <h2 class="text-xl font-semibold mb-2" id="txt-mapa">Mapa Interactiu</h2>
@@ -58,7 +105,7 @@
     <section id="rutes">
       <h2 class="text-xl font-semibold mb-2" id="txt-rutes">Rutes Emblemàtiques</h2>
       <ul class="list-disc pl-6 space-y-1">
-        <li>Ruta Històrica</li>
+        <a href="mapa.php"><li>Ruta Històrica</li></a>
         <li>Ruta Gastronòmica</li>
         <li>Ruta Cultural</li>
         <li>Ruta de la Guerra Civil</li>
@@ -79,9 +126,9 @@
   <footer class="bg-blue-900 text-white mt-12 p-4">
     <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
       <div class="flex gap-4 mb-2 md:mb-0">
-        <a href="https://www.facebook.com" target="_blank"><img src="img/facebook.svg" alt="Facebook" class="social-icon rounded-full hover:opacity-80" /></a>
-        <a href="https://www.instagram.com" target="_blank"><img src="img/instagram.svg" alt="Instagram" class="social-icon rounded-full hover:opacity-80" /></a>
-        <a href="https://www.twitter.com" target="_blank"><img src="img/twitter.svg" alt="Twitter" class="social-icon rounded-full hover:opacity-80" /></a>
+        <a href="https://www.facebook.com" target="_blank"><img src="img/fa.svg" alt="Facebook" class="social-icon rounded-full hover:opacity-80" /></a>
+        <a href="https://www.instagram.com" target="_blank"><img src="img/ins.png" alt="Instagram" class="social-icon rounded-full hover:opacity-80" /></a>
+        <a href="https://www.twitter.com" target="_blank"><img src="img/blu.svg" alt="Twitter" class="social-icon rounded-full hover:opacity-80" /></a>
       </div>
       <p class="text-sm">&copy; 2025 Descobreix Alacant. Tots els drets reservats.</p>
     </div>
